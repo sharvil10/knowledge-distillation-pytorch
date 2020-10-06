@@ -12,7 +12,6 @@ import shutil
 import torch
 from collections import OrderedDict
 
-import tensorflow as tf
 import numpy as np
 import scipy.misc 
 try:

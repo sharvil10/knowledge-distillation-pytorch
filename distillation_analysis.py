@@ -36,8 +36,8 @@ def model_analysis(model, dataloader, params, temperature=1., num_classes=10):
         for idx, (data_batch, labels_batch) in enumerate(dataloader):
 
             if params.cuda:
-                data_batch, labels_batch = data_batch.cuda(async=True), \
-                                           labels_batch.cuda(async=True)
+                data_batch, labels_batch = data_batch.cuda(non_blocking=True), \
+                                           labels_batch.cuda(non_blocking=True)
             data_batch, labels_batch = Variable(data_batch), Variable(labels_batch)
 
             output_batch = model(data_batch)

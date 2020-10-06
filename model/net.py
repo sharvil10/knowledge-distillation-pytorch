@@ -43,9 +43,9 @@ class Net(nn.Module):
         self.bn3 = nn.BatchNorm2d(self.num_channels*4)
 
         # 2 fully connected layers to transform the output of the convolution layers to the final output
-        self.fc1 = nn.Linear(4*4*self.num_channels*4, self.num_channels*4)
+        self.fc1 = nn.Linear(8*8*self.num_channels*4, self.num_channels*4)
         self.fcbn1 = nn.BatchNorm1d(self.num_channels*4)
-        self.fc2 = nn.Linear(self.num_channels*4, 10)       
+        self.fc2 = nn.Linear(self.num_channels*4, 100)       
         self.dropout_rate = params.dropout_rate
 
     def forward(self, s):
@@ -69,12 +69,12 @@ class Net(nn.Module):
         s = self.bn3(self.conv3(s))                         # batch_size x num_channels*4 x 8 x 8
         s = F.relu(F.max_pool2d(s, 2))                      # batch_size x num_channels*4 x 4 x 4
 
+        #print(s.shape)
         # flatten the output for each image
-        s = s.view(-1, 4*4*self.num_channels*4)             # batch_size x 4*4*num_channels*4
+        s = s.view(-1, 8*8*self.num_channels*4)             # batch_size x 4*4*num_channels*4
 
         # apply 2 fully connected layers with dropout
-        s = F.dropout(F.relu(self.fcbn1(self.fc1(s))), 
-            p=self.dropout_rate, training=self.training)    # batch_size x self.num_channels*4
+        s = F.relu(self.fcbn1(self.fc1(s)))    # batch_size x self.num_channels*4
         s = self.fc2(s)                                     # batch_size x 10
 
         return s

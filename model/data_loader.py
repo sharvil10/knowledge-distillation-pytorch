@@ -10,38 +10,43 @@ from PIL import Image
 import torch
 import torchvision
 import torchvision.transforms as transforms
+from torchvision.transforms import Normalize, ToTensor, Resize, RandomResizedCrop, RandomRotation, RandomHorizontalFlip, ColorJitter
 from torch.utils.data.sampler import SubsetRandomSampler
 
 def fetch_dataloader(types, params):
     """
     Fetch and return train/dev dataloader with hyperparameters (params.subset_percent = 1.)
     """
-
+    mean = [0.5071, 0.4865, 0.4409]
+    std_dev = [0.2673, 0.2564, 0.2762]
     # using random crops and horizontal flip for train set
     if params.augmentation == "yes":
         train_transformer = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),  # randomly flip image horizontally
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+            RandomResizedCrop((64, 64), scale = (0.7, 1.0)),
+            RandomRotation(30),
+            RandomHorizontalFlip(),
+            ColorJitter(0.2, 0.2, 0.2, 0.05),
+            ToTensor(),
+            Normalize(mean, std_dev)
+        ]) 
 
     # data augmentation can be turned off
     else:
-        train_transformer = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+        train_transformer = transforms.Compose([Resize((64, 64)),
+                                         ToTensor(),
+                                         Normalize(mean, std_dev)])
 
     # transformer for dev set
-    dev_transformer = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+    dev_transformer = transforms.Compose([Resize((64, 64)),
+                                         ToTensor(),
+                                         Normalize(mean, std_dev)])
 
-    trainset = torchvision.datasets.CIFAR10(root='./data-cifar10', train=True,
+    trainset = torchvision.datasets.CIFAR100(root='./data-cifar10', train=True,
         download=True, transform=train_transformer)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=params.batch_size,
         shuffle=True, num_workers=params.num_workers, pin_memory=params.cuda)
 
-    devset = torchvision.datasets.CIFAR10(root='./data-cifar10', train=False,
+    devset = torchvision.datasets.CIFAR100(root='./data-cifar10', train=False,
         download=True, transform=dev_transformer)
     devloader = torch.utils.data.DataLoader(devset, batch_size=params.batch_size,
         shuffle=False, num_workers=params.num_workers, pin_memory=params.cuda)
@@ -59,29 +64,34 @@ def fetch_subset_dataloader(types, params):
     Use only a subset of dataset for KD training, depending on params.subset_percent
     """
 
+    mean = [0.5071, 0.4865, 0.4409]
+    std_dev = [0.2673, 0.2564, 0.2762]
     # using random crops and horizontal flip for train set
     if params.augmentation == "yes":
         train_transformer = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),  # randomly flip image horizontally
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+            RandomResizedCrop((64, 64), scale = (0.7, 1.0)),
+            RandomRotation(30),
+            RandomHorizontalFlip(),
+            ColorJitter(0.2, 0.2, 0.2, 0.05),
+            ToTensor(),
+            Normalize(mean, std_dev)
+        ]) 
 
     # data augmentation can be turned off
     else:
-        train_transformer = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+        train_transformer = transforms.Compose([Resize((64, 64)),
+                                         ToTensor(),
+                                         Normalize(mean, std_dev)])
 
     # transformer for dev set
-    dev_transformer = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))])
+    dev_transformer = transforms.Compose([Resize((64, 64)),
+                                         ToTensor(),
+                                         Normalize(mean, std_dev)])
 
-    trainset = torchvision.datasets.CIFAR10(root='./data-cifar10', train=True,
+    trainset = torchvision.datasets.CIFAR100(root='./data-cifar10', train=True,
         download=True, transform=train_transformer)
 
-    devset = torchvision.datasets.CIFAR10(root='./data-cifar10', train=False,
+    devset = torchvision.datasets.CIFAR100(root='./data-cifar10', train=False,
         download=True, transform=dev_transformer)
 
     trainset_size = len(trainset)
