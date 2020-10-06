@@ -1,4 +1,6 @@
 # Original repo is located [here](https://github.com/peterliht/knowledge-distillation-pytorch)
+### This fork is a modified version of the original repo to work with my project which uses a VGG on CIFAR 100 dataset.
+
 # knowledge-distillation-pytorch
 * Exploring knowledge distillation of DNNs for efficient hardware solutions
 * Author: Haitong Li
