@@ -1,3 +1,4 @@
+# Original repo is located [here](https://github.com/peterliht/knowledge-distillation-pytorch)
 # knowledge-distillation-pytorch
 * Exploring knowledge distillation of DNNs for efficient hardware solutions
 * Author: Haitong Li
